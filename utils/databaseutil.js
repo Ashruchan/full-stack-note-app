@@ -1,13 +1,12 @@
 const mongo = require("mongodb");
 const mongoclinte = mongo.MongoClient;
+require("dotenv").config();
 
 let _db;
-
-const mongourl =
-  "mongodb+srv://Ashru:142007@mongo.qfpfgpz.mongodb.net/?appName=mongo";
+const mongoUrl = process.env.MONGO_URL;
 const mongoConnect = (callback) => {
   mongoclinte
-    .connect(mongourl)
+    .connect(mongoUrl)
     .then((client) => {
       console.log("the database is connected correctly");
       callback(client);
