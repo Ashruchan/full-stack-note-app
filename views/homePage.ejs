@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes App - Home</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              background: '#0F172A',
+              sidebar: '#1E293B',
+              card: '#334155',
+              primary: '#6366F1',
+              secondary: '#22D3EE',
+              textPrimary: '#F1F5F9',
+              textSecondary: '#94A3B8',
+              borderSubtle: '#475569',
+              danger: '#EF4444',
+              success: '#22C55E'
+            }
+          }
+        }
+      };
+    </script>
+</head>
+  <body class="min-h-screen bg-background text-textPrimary">
+    <div class="flex min-h-screen">
+      <!-- Sidebar / Navbar -->
+        <%-include('partials/sidebar')%>
+      <!-- Main Content -->
+      <main class="flex-1 bg-background px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
+        <!-- Hero / Header -->
+        <section
+          class="max-w-4xl mx-auto mb-6 sm:mb-8 lg:mb-10 flex flex-col gap-4 sm:gap-5"
+        >
+          <div class="flex flex-col sm:flex-row sm:items-end gap-3 sm:justify-between">
+            <div>
+              <h1
+                class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-textPrimary"
+              >
+                Welcome back , <span class="text-secondary">Note Maker</span>
+              </h1>
+              <p class="mt-1 text-sm sm:text-base text-textSecondary max-w-xl">
+                Keep your thoughts, tasks, and ideas organized in one calm, focused space.
+                Start by creating a new note or reviewing what you captured earlier.
+              </p>
+            </div>
+            <div
+              class="inline-flex items-center gap-2 rounded-full border border-borderSubtle bg-card/40 px-3 py-1.5 text-xs text-textSecondary"
+            >
+              <span class="inline-flex h-2 w-2 rounded-full bg-success"></span>
+              <span class="uppercase tracking-wide">All changes saved</span>
+            </div>
+          </div>
+
+          <!-- Quick actions -->
+          <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+            <a
+              href="/addNotes.ejs"
+              class="inline-flex items-center gap-2 rounded-full bg-primary px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-semibold text-textPrimary hover:bg-primary/90 transition-colors"
+            >
+              <span
+                class="flex h-4 w-4 items-center justify-center rounded-full bg-secondary text-[10px] font-bold text-background"
+                >+</span
+              >
+              New Note
+            </a>
+            <a
+              href="/viewNotes"
+              class="inline-flex items-center gap-2 rounded-full border border-borderSubtle bg-card/30 px-3 sm:px-4 py-1.5 text-xs sm:text-sm text-textSecondary hover:border-secondary/60 hover:text-secondary transition-colors"
+            >
+              Recent Notes
+            </a>
+            <a
+              href="/viewNotes"
+              class="inline-flex items-center gap-2 rounded-full border border-borderSubtle bg-card/30 px-3 sm:px-4 py-1.5 text-xs sm:text-sm text-textSecondary hover:border-primary/60 hover:text-primary transition-colors"
+            >
+              View All (<%= notesCount %>)
+            </a>
+          </div>
+        </section>
+
+        <!-- Content Grid -->
+        <section class="max-w-6xl mx-auto grid lg:grid-cols-[2fr,1.3fr] gap-6 lg:gap-8">
+          <!-- Notes preview -->
+          <div class="space-y-4 sm:space-y-5">
+            <div class="flex items-center justify-between">
+              <h2 class="text-sm font-semibold tracking-wide text-textSecondary uppercase">
+                Your Notes
+              </h2>
+              <a
+                href="/viewNotes"
+                class="text-xs text-secondary hover:text-secondary/80 underline-offset-4 hover:underline"
+              >
+                View all
+              </a>
+            </div>
+
+            <div
+              class="grid sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4"
+              aria-label="Notes preview"
+            >
+              <% if (recentNotes && recentNotes.length > 0) { %>
+                <% recentNotes.forEach((note, idx) => { %>
+                <% const noteId = note.id != null ? note.id : (notesCount - 1 - idx); %>
+              <a
+                href="/note/<%= noteId %>"
+                class="group rounded-2xl border border-borderSubtle/70 bg-card/70 p-4 sm:p-5 flex flex-col gap-3 hover:border-secondary/70 hover:bg-card/90 transition-colors cursor-pointer block"
+              >
+                <header class="flex items-start justify-between gap-3">
+                  <h3 class="font-semibold text-sm sm:text-base text-textPrimary line-clamp-1">
+                    <%= note.title || 'Untitled' %>
+                  </h3>
+                  <% if (note.tags) { %>
+                  <% const firstTag = Array.isArray(note.tags) ? note.tags[0] : String(note.tags).split(',')[0]; %>
+                  <span class="rounded-full bg-secondary/10 text-secondary text-[10px] px-2 py-0.5 font-medium truncate max-w-[80px]">
+                    <%= firstTag || 'Note' %>
+                  </span>
+                  <% } else { %>
+                  <span class="rounded-full bg-primary/10 text-primary text-[10px] px-2 py-0.5 font-medium">
+                    Note
+                  </span>
+                  <% } %>
+                </header>
+                <p class="text-xs sm:text-sm text-textSecondary line-clamp-3 flex-1">
+                  <%= note.body || '' %>
+                </p>
+                <footer class="mt-2 flex items-center justify-between text-[11px]">
+                  <span class="text-textSecondary"><%= (note.body || '').length %> characters</span>
+                  <span class="text-secondary group-hover:text-secondary/80">View →</span>
+                </footer>
+              </a>
+                <% }); %>
+              <% } else { %>
+              <div class="col-span-full text-center py-8 rounded-2xl border border-borderSubtle/50 bg-card/30">
+                <p class="text-textSecondary text-sm mb-4">No notes yet. Create your first one!</p>
+                <a
+                  href="/addNotes.ejs"
+                  class="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-textPrimary hover:bg-primary/90 transition-colors"
+                >
+                  <span>+</span>
+                  New Note
+                </a>
+              </div>
+              <% } %>
+            </div>
+          </div>
+
+          <!-- Right panel: quick note / stats -->
+          <aside class="space-y-4 sm:space-y-5">
+            <!-- Quick Note -->
+            <div class="rounded-2xl border border-borderSubtle/70 bg-card/80 p-4 sm:p-5 flex flex-col gap-3">
+              <div class="flex items-center justify-between">
+                <h2 class="text-sm font-semibold text-textPrimary">Quick note</h2>
+                <span class="text-[11px] text-textSecondary">Saves to your notes</span>
+              </div>
+              <form method="post" action="/notes" class="flex flex-col gap-3">
+                <input type="hidden" name="title" value="Quick note" />
+                <textarea
+                  name="body"
+                  required
+                  class="h-28 w-full resize-none rounded-xl border border-borderSubtle/60 bg-background/40 px-3 py-2 text-xs sm:text-sm text-textPrimary placeholder:text-textSecondary/60 focus:border-secondary focus:outline-none focus:ring-1 focus:ring-secondary/50"
+                  placeholder="Capture a thought in a sentence or two..."
+                ></textarea>
+                <input type="hidden" name="tags" value="" />
+                <button
+                  type="submit"
+                  class="inline-flex items-center justify-center gap-1.5 rounded-full bg-success/90 px-3 py-1.5 text-[11px] font-semibold text-background hover:bg-success transition-colors w-fit"
+                >
+                  Save quick note
+                </button>
+              </form>
+            </div>
+
+            <!-- Stats -->
+            <div class="rounded-2xl border border-borderSubtle/70 bg-card/60 p-4 sm:p-5 space-y-3">
+              <h2 class="text-sm font-semibold text-textPrimary">Today at a glance</h2>
+              <div class="grid grid-cols-3 gap-3 text-center text-[11px] sm:text-xs">
+                <div class="rounded-xl border border-borderSubtle/70 bg-background/40 p-2">
+                  <p class="text-textSecondary mb-1">Notes</p>
+                  <p class="text-lg font-semibold text-secondary"><%= notesCount %></p>
+                </div>
+                <div class="rounded-xl border border-borderSubtle/70 bg-background/40 p-2">
+                  <p class="text-textSecondary mb-1">With tags</p>
+                  <p class="text-lg font-semibold text-primary"><%= notesWithTags %></p>
+                </div>
+                <div class="rounded-xl border border-borderSubtle/70 bg-background/40 p-2">
+                  <p class="text-textSecondary mb-1">Recent</p>
+                  <p class="text-lg font-semibold text-textSecondary"><%= recentCount %></p>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </section>
+      </main>
+    </div>
+</body>
+</html>

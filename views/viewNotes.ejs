@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Notes - Notes App</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              background: '#0F172A', // Deep Navy
+              sidebar: '#1E293B', // Dark Slate
+              card: '#334155', // Soft Slate
+              primary: '#6366F1', // Indigo
+              secondary: '#22D3EE', // Cyan
+              textPrimary: '#F1F5F9', // Off White
+              textSecondary: '#94A3B8', // Muted Gray
+              borderSubtle: '#475569', // Subtle Gray
+              danger: '#EF4444', // Soft Red
+              success: '#22C55E' // Green
+            }
+          }
+        }
+      };
+    </script>
+  </head>
+  <body class="min-h-screen bg-background text-textPrimary">
+    <div class="flex min-h-screen">
+      <!-- Sidebar / Navbar -->
+       <%-include('partials/sidebar')%>
+
+      <!-- Main Content -->
+      <main class="flex-1 bg-background px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
+        <div class="max-w-7xl mx-auto">
+          <!-- Header -->
+          <div class="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1
+                class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-textPrimary mb-2"
+              >
+                All Notes
+              </h1>
+              <p class="text-sm sm:text-base text-textSecondary">
+                Browse through all your saved notes. Click on any note to view details.
+              </p>
+            </div>
+            <form method="get" action="/viewNotes" class="flex items-center gap-3">
+              <input
+                type="text"
+                name="q"
+                placeholder="Search notes..."
+                class="rounded-lg border border-borderSubtle/70 bg-card/60 px-4 py-2 text-sm text-textPrimary placeholder:text-textSecondary/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors w-full sm:w-64"
+              />
+              <input
+                type="text"
+                name="tag"
+                placeholder="Filter by tag"
+                class="rounded-lg border border-borderSubtle/70 bg-card/60 px-4 py-2 text-sm text-textPrimary placeholder:text-textSecondary/60 focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary/30 transition-colors w-full sm:w-40"
+              />
+              <button
+                type="submit"
+                class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-textPrimary hover:bg-primary/90 transition-colors"
+              >
+                Search
+              </button>
+            </form>
+          </div>
+
+          <!-- Notes Grid (populated by backend) -->
+          <% if (notes && notes.length > 0) { %>
+          <div
+            id="notesContainer"
+            class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 mb-8"
+          >
+            <% notes.forEach((note, idx) => { %>
+            <% const noteId = note.id != null ? note.id : idx; %>
+            <a
+              href="/note/<%= noteId %>"
+              class="rounded-2xl border border-borderSubtle/70 bg-card/70 p-4 sm:p-5 flex flex-col gap-3 hover:border-secondary/70 hover:bg-card/90 transition-all block"
+            >
+              <header class="flex items-start justify-between gap-3">
+                <h3 class="font-semibold text-sm sm:text-base text-textPrimary line-clamp-2 flex-1">
+                  <%= note.title || 'Untitled' %>
+                </h3>
+                <% if (note.id) { %>
+                <span class="rounded-full bg-primary/10 text-primary text-[10px] px-2 py-0.5 font-medium whitespace-nowrap">
+                  #<%= note.id %>
+                </span>
+                <% } %>
+              </header>
+              <p class="text-xs sm:text-sm text-textSecondary line-clamp-4 flex-1">
+                <%= note.body || '' %>
+              </p>
+              <% if (note.tags) { %>
+              <div class="flex flex-wrap gap-1.5 mt-2">
+                <% const tagList = Array.isArray(note.tags) ? note.tags : String(note.tags).split(',').map(t => t.trim()).filter(Boolean); %>
+                <% tagList.forEach(tag => { %>
+                <span class="rounded-full bg-secondary/10 text-secondary text-[10px] px-2 py-0.5 font-medium">#<%= tag %></span>
+                <% }); %>
+              </div>
+              <% } %>
+              <footer class="mt-auto pt-2 flex items-center justify-between text-[11px] border-t border-borderSubtle/30">
+                <span class="text-textSecondary"><%= (note.body || '').length %> characters</span>
+                <span class="text-secondary">View →</span>
+              </footer>
+            </a>
+            <% }); %>
+          </div>
+          <% } %>
+
+          <!-- Empty State -->
+          <% if (!notes || notes.length === 0) { %>
+          <div
+            id="emptyState"
+            class="text-center py-12 sm:py-16 rounded-2xl border border-borderSubtle/50 bg-card/30"
+          >
+            <div class="max-w-md mx-auto px-4">
+              <div
+                class="h-16 w-16 mx-auto mb-4 rounded-full bg-card/60 flex items-center justify-center"
+              >
+                <span class="text-3xl text-textSecondary">📝</span>
+              </div>
+              <h3 class="text-lg font-semibold text-textPrimary mb-2">
+                No notes found
+              </h3>
+              <p class="text-sm text-textSecondary mb-6">
+                You haven't created any notes yet. Start by adding your first note!
+              </p>
+              <a
+                href="/addNotes.ejs"
+                class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-textPrimary hover:bg-primary/90 transition-colors"
+              >
+                <span>+</span>
+                <span>Create Your First Note</span>
+              </a>
+            </div>
+          </div>
+          <% } %>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= note.title || 'Untitled' %> - Notes App</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              background: '#0F172A',
+              sidebar: '#1E293B',
+              card: '#334155',
+              primary: '#6366F1',
+              secondary: '#22D3EE',
+              textPrimary: '#F1F5F9',
+              textSecondary: '#94A3B8',
+              borderSubtle: '#475569',
+              danger: '#EF4444',
+              success: '#22C55E'
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      .note-body {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-background text-textPrimary">
+    <div class="flex min-h-screen">
+      <!-- Sidebar -->
+       <%-include('partials/sidebar')%>
+
+      <!-- Main Content -->
+      <main class="flex-1 px-4 sm:px-6 lg:px-10 py-6 sm:py-8 overflow-auto">
+        <div class="max-w-3xl mx-auto">
+          <!-- Back link -->
+          <a
+            href="/viewNotes"
+            class="inline-flex items-center gap-2 text-sm text-textSecondary hover:text-secondary transition-colors mb-6"
+          >
+            ← Back to all notes
+          </a>
+
+          <!-- Note Card -->
+          <article class="rounded-2xl border border-borderSubtle/70 bg-card/80 p-6 sm:p-8 md:p-10 shadow-lg">
+            <!-- Header -->
+            <header class="mb-6 pb-4 border-b border-borderSubtle/50">
+              <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-textPrimary mb-3 leading-tight">
+                <%= note.title || 'Untitled' %>
+              </h1>
+              <div class="flex flex-wrap items-center gap-2 text-sm text-textSecondary">
+                <span class="rounded-full bg-secondary/10 text-secondary px-2.5 py-0.5 text-xs font-medium">
+                  <%= (note.body || '').length %> characters
+                </span>
+                <% if (note.tags) { %>
+                <% const tagList = Array.isArray(note.tags) ? note.tags : String(note.tags).split(',').map(t => t.trim()).filter(Boolean); %>
+                <% tagList.forEach(tag => { %>
+                <span class="rounded-full bg-primary/10 text-primary px-2.5 py-0.5 text-xs font-medium">#<%= tag %></span>
+                <% }); %>
+                <% } %>
+              </div>
+            </header>
+
+            <!-- Body -->
+            <div class="note-body text-textPrimary text-base sm:text-lg leading-relaxed">
+              <%= note.body || '' %>
+            </div>
+
+            <!-- Actions -->
+            <footer class="mt-8 pt-6 border-t border-borderSubtle/50 flex flex-wrap gap-3">
+              <a
+                href="/viewNotes"
+                class="inline-flex items-center gap-2 rounded-lg border border-borderSubtle bg-card/60 px-4 py-2 text-sm font-medium text-textPrimary hover:bg-card hover:border-secondary transition-colors"
+              >
+                ← All Notes
+              </a>
+              <a
+                href="/"
+                class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-textPrimary hover:bg-primary/90 transition-colors"
+              >
+                + New Note
+              </a>
+              <a
+                href="/delete?id=<%= noteId %>"
+                class="inline-flex items-center gap-2 rounded-lg border border-danger/60 text-danger px-4 py-2 text-sm font-medium hover:bg-danger/10 transition-colors"
+                onclick="return confirm('Delete this note?');"
+              >
+                🗑️ Delete
+              </a>
+            </footer>
+          </article>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

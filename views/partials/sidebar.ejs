@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              background: "#0F172A",
+              sidebar: "#1E293B",
+              card: "#334155",
+              primary: "#6366F1",
+              secondary: "#22D3EE",
+              textPrimary: "#F1F5F9",
+              textSecondary: "#94A3B8",
+              borderSubtle: "#475569",
+              danger: "#EF4444",
+              success: "#22C55E",
+            },
+          },
+        },
+      };
+    </script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const themeToggle = document.getElementById("themeToggle");
+        const sun = document.getElementById("sun");
+        const moon = document.getElementById("moon");
+        const html = document.documentElement;
+
+        // Load saved theme
+        if (localStorage.theme === "light") {
+          html.classList.remove("dark");
+          sun.classList.remove("scale-0");
+          moon.classList.add("scale-0");
+        } else {
+          html.classList.add("dark");
+          sun.classList.add("scale-0");
+          moon.classList.remove("scale-0");
+        }
+
+        themeToggle.addEventListener("click", () => {
+          html.classList.toggle("dark");
+
+          sun.classList.toggle("scale-0");
+          moon.classList.toggle("scale-0");
+
+          localStorage.theme = html.classList.contains("dark")
+            ? "dark"
+            : "light";
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <nav
+      class="w-full md:w-64 bg-sidebar border-b md:border-b-0 md:border-r border-borderSubtle flex md:flex-col items-center md:items-stretch justify-between md:justify-start px-4 md:px-6 py-3 md:py-6 gap-3 md:gap-6"
+    >
+      <!-- Brand -->
+      <div class="flex items-center gap-3">
+        <a
+          href="/"
+          class="h-9 w-9 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-sm font-semibold shadow-lg"
+        >
+          N
+        </a>
+        <div class="hidden sm:block">
+          <p class="text-sm font-semibold tracking-wide">Notes Studio</p>
+          <p class="text-xs text-textSecondary">Capture. Organize. Focus.</p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div
+        class="flex md:flex-col items-center md:items-stretch gap-2 md:gap-3 w-auto md:w-full"
+      >
+        <a
+          href="/viewNotes"
+          class="inline-flex items-center justify-center gap-2 rounded-lg border border-borderSubtle bg-card/60 px-3 py-2 text-xs sm:text-sm font-medium text-textPrimary hover:bg-card hover:border-primary/60 hover:text-secondary transition-colors w-auto md:w-full"
+        >
+          <span class="h-1.5 w-1.5 rounded-full bg-secondary"></span>
+          View Notes
+        </a>
+
+        <a
+          href="/addNotes.ejs"
+          class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2 text-xs sm:text-sm font-semibold text-textPrimary shadow-md shadow-primary/30 hover:bg-primary/90 transition-colors w-auto md:w-full"
+        >
+          <span
+            class="flex h-4 w-4 items-center justify-center rounded-md bg-secondary text-[10px] font-bold text-background"
+            >+</span
+          >
+          Add Note
+        </a>
+
+        <a
+          href="/deletePage"
+          class="inline-flex items-center justify-center gap-2 rounded-lg border border-danger/60 bg-card/40 px-3 py-2 text-xs sm:text-sm font-medium text-danger hover:bg-danger/10 transition-colors w-auto md:w-full"
+        >
+          <span class="h-3 w-3 rounded-full border border-danger"></span>
+          Delete Notes
+        </a>
+      </div>
+
+      <!-- theme togel -->
+      <!-- Theme Toggle -->
+      <button
+        id="themeToggle"
+        class="relative w-16 h-8 rounded-full bg-card flex items-center transition-all duration-500 p-1 overflow-hidden"
+      >
+        <!-- Sun -->
+        <div
+          id="sun"
+          class="absolute left-1 w-6 h-6 bg-yellow-400 rounded-full shadow-md transition-all duration-500"
+        ></div>
+
+        <!-- Moon -->
+        <div
+          id="moon"
+          class="absolute right-1 w-6 h-6 bg-gray-300 rounded-full shadow-md scale-0 transition-all duration-500"
+        ></div>
+      </button>
+    </nav>
+  </body>
+</html>
