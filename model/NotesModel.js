@@ -1,37 +1,39 @@
 const { getdb } = require("../utils/databaseutil");
 const { ObjectId } = require("mongodb");
 
-
-module.exports=class Note{
-    constructor(title, body, tag){
-        this.title = title;
-        this.body = body;
-        this.tag = tag;
-    }
-    saveNotes(){
-        const db=getdb();
-        return db.collection("notesData").insertOne(this)
-    }
-    static viewNotes(){
-        const db=getdb();
-        return db.collection("notesData").find().toArray();
-    }
-    static deleteNotes(id){
-        const db = getdb();
-        return db.collection("notesData").deleteOne({_id:new ObjectId(id)});
-    }
-    static deleteAllNotes(){
-        const db = getdb();
-        return db.collection("notesData").deleteMany({});
-    }
-}
-
-
+module.exports = class Note {
+  constructor(title, body, tag) {
+    this.title = title;
+    this.body = body;
+    this.tag = tag;
+  }
+  saveNotes() {
+    const db = getdb();
+    return db.collection("notesData").insertOne(this);
+  }
+  static viewNotes() {
+    const db = getdb();
+    return db.collection("notesData").find().toArray();
+  }
+  static deleteNotes(id) {
+    const db = getdb();
+    return db.collection("notesData").deleteOne({ _id: new ObjectId(id) });
+  }
+  static deleteAllNotes() {
+    const db = getdb();
+    return db.collection("notesData").deleteMany({});
+  }
+  static getNoteById(id) {
+    const db = getdb();
+    return db.collection("notesData").findOne({
+      _id: new ObjectId(id),
+    });
+  }
+};
 
 // const fs = require('fs')2025
 // const path=require('path')
 // const filePath = path.join(__dirname, '..', 'data', 'notesData.json');
-
 
 // exports.getAllNotes=()=>{
 //     try {

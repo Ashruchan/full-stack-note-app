@@ -60,7 +60,7 @@
                 <span class="rounded-full bg-secondary/10 text-secondary px-2.5 py-0.5 text-xs font-medium">
                   <%= (note.body || '').length %> characters
                 </span>
-                <% if (note.tags) { %>
+                <% if (note.tag) { %>
                 <% const tagList = Array.isArray(note.tags) ? note.tags : String(note.tags).split(',').map(t => t.trim()).filter(Boolean); %>
                 <% tagList.forEach(tag => { %>
                 <span class="rounded-full bg-primary/10 text-primary px-2.5 py-0.5 text-xs font-medium">#<%= tag %></span>

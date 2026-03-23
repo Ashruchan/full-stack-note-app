@@ -99,18 +99,23 @@ exports.saveNote = (req, res) => {
   res.redirect("/");
 };
 
-exports.noteDetail = (req, res) => {
+exports.noteDetail = async (req, res) => {
   try {
-    // const { id } = req.params;
-    // const note = noteModel.getNoteById(id);
-    // if (!note) {
-    //   return res.redirect("/viewNotes");
-    // }
-    const allNotes = noteModel.getAllNotes();
-    const noteIndex = allNotes.findIndex((n) => n === note);
-    const noteId = note.id != null ? note.id : noteIndex;
-    res.render("noteDetail", { note, noteId });
+    const { id } = req.params;
+
+    const note = await noteModel.getNoteById(id);
+
+    if (!note) {
+      return res.redirect("/viewNotes");
+    }
+
+    res.render("noteDetail", {
+      note,
+      noteId: note._id.toString()
+    });
+
   } catch (err) {
+    console.error(err);
     res.redirect("/viewNotes");
   }
 };
