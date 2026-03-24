@@ -2,21 +2,19 @@ const path = require("path");
 const noteModel = require("../model/NotesModel");
 const Note = require("../model/NotesModel");
 const { ObjectId } = require("mongodb");
-exports.home = (req, res) => {
+const { getdb } = require("../utils/databaseutil");
+
+
+
+exports.home = async (req, res) => {
   try {
-    const allNotes = noteModel.getAllNotes();
+    const db = getdb();
+    const allNotes = await Note.viewNotes();
     const recentNotes = (allNotes || []).slice(-6).reverse();
-    const notesCount = (allNotes || []).length;
-    const notesWithTags = (allNotes || []).filter((n) => {
-      if (!n.tags) return false;
-      const t = Array.isArray(n.tags)
-        ? n.tags
-        : String(n.tags)
-            .split(",")
-            .map((x) => x.trim())
-            .filter(Boolean);
-      return t.length > 0;
-    }).length;
+    const notesCount = await db.collection("notesData").countDocuments();
+    const notesWithTags = await db.collection("notesData").countDocuments({
+      tag: { $exists: true, $ne: "" },
+    });
     const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
     const recentCount = (allNotes || []).filter((n) => {
       const created = n.id ? parseInt(n.id, 10) : 0;
@@ -111,9 +109,8 @@ exports.noteDetail = async (req, res) => {
 
     res.render("noteDetail", {
       note,
-      noteId: note._id.toString()
+      noteId: note._id.toString(),
     });
-
   } catch (err) {
     console.error(err);
     res.redirect("/viewNotes");
