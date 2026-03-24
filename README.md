@@ -1,12 +1,13 @@
 # Full-Stack Notes App (Express + EJS + MongoDB)
 
-## Visit here
--https://notehive-jet.vercel.app/
 
 A simple full-stack notes app that supports basic CRUD operations:
 - Create notes (title, body, tags)
 - View notes (home + list page)
 - Delete notes (single note or all notes)
+
+## Visit here
+-https://notehive-jet.vercel.app/
 
 ## Tech Stack
 - Backend: `express` (routes + server)
